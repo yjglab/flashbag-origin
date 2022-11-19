@@ -3,6 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import "antd/dist/antd.css";
 import Head from "next/head";
+import wrapper from "../store/configureStore";
 
 const TwitBird = ({ Component }) => {
   return (
@@ -21,4 +22,4 @@ TwitBird.propTypes = {
   Component: PropTypes.elementType.isRequired,
 };
 
-export default TwitBird;
+export default wrapper.withRedux(TwitBird);

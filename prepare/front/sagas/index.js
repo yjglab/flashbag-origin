@@ -1,5 +1,6 @@
-import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
-import axios from "axios";
+import { all, fork } from "redux-saga/effects";
+import postSaga from "./post";
+import userSaga from "./user";
 
 // fork : (비동기 함수 호출)
 // call : (동기 함수 호출). call 함수 형식 ==> call(A함수, A함수인자 ...)
@@ -12,73 +13,6 @@ import axios from "axios";
 // throttle : 그래서 이것도 사용하는데, 시간을 정해두고 어떤 시간동안은 요청을 한번으로 제한함. 특수한 경우에만 사용.(디도스공격 방지 등)
 // takeLeading : takeLatest와 반대.
 
-function logInAPI(data) {
-  // data인자: action.data
-  return axios.post("/api/login", data);
-}
-function* logIn(action) {
-  try {
-    yield delay(2000); // fake
-    // const result = yield call(logInAPI, action.data);
-    yield put({
-      type: "LOG_IN_SUCCESS",
-      //   data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: "LOG_IN_FAILURE",
-      data: err.response.data,
-    });
-  }
-}
-
-function logOutAPI() {
-  return axios.post("/api/logOut");
-}
-function* logOut() {
-  try {
-    yield delay(1000);
-    // const result = yield call(logOutAPI);
-    yield put({
-      type: "LOG_OUT_SUCCESS",
-      //   data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: "LOG_OUT_FAILURE",
-      data: err.response.data,
-    });
-  }
-}
-
-function addPostAPI(data) {
-  return axios.post("/api/post", data);
-}
-function* addPost(action) {
-  try {
-    yield delay(1000);
-    // const result = yield call(addPostAPI, action.data);
-    yield put({
-      type: "ADD_POST_SUCCESS",
-      //   data: result.data,
-    });
-  } catch (err) {
-    yield put({
-      type: "ADD_POST_FAILURE",
-      data: err.response.data,
-    });
-  }
-}
-
-function* watchLogin() {
-  yield takeLatest("LOG_IN_REQUEST", logIn);
-}
-function* watchLogOut() {
-  yield takeLatest("LOG_OUT_REQUEST", logOut);
-}
-function* watchAddPost() {
-  yield takeLatest("ADD_POST_REQUEST", addPost);
-}
 export default function* rootSaga() {
-  yield all([fork(watchLogin)]); // all() : 한번에 모두 동시 실행
+  yield all([fork(postSaga), fork(userSaga)]); // all() : 한번에 모두 동시 실행
 }

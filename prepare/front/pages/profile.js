@@ -7,12 +7,12 @@ import Router from "next/router";
 import { useSelector } from "react-redux";
 
 const Profile = () => {
+  const { me } = useSelector((state) => state.user);
   useEffect(() => {
     if (!(me && me.id)) {
       Router.push("/");
     }
   }, [me && me.id]);
-  const { me } = useSelector((state) => state.user);
 
   if (!me) {
     return null;

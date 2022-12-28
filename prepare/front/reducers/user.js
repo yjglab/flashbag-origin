@@ -1,6 +1,9 @@
 import produce from "immer";
 
 export const initialState = {
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
   followLoading: false,
   followDone: false,
   followError: null,
@@ -23,6 +26,10 @@ export const initialState = {
   signUpData: {},
   loginData: {},
 };
+export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
+export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO_SUCCESS";
+export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
+
 export const LOG_IN_REQUEST = "LOG_IN_REQUEST";
 export const LOG_IN_SUCCESS = "LOG_IN_SUCCESS";
 export const LOG_IN_FAILURE = "LOG_IN_FAILURE";
@@ -50,23 +57,6 @@ export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 
-const dummyUser = (data) => ({
-  ...data,
-  nickname: "yjglab",
-  id: 1,
-  Posts: [{ id: 1 }],
-  Followings: [
-    { nickname: "foll1" },
-    { nickname: "foll1" },
-    { nickname: "foll1" },
-  ],
-  Followers: [
-    { nickname: "foll1" },
-    { nickname: "foll1" },
-    { nickname: "foll1" },
-  ],
-});
-
 export const loginRequestAction = (data) => {
   return {
     type: LOG_IN_REQUEST,
@@ -82,6 +72,20 @@ export const logoutRequestAction = () => {
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoDone = false;
+        draft.loadMyInfoError = null;
+        break;
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadMyInfoLoading = false;
+        draft.me = action.data;
+        draft.loadMyInfoDone = true;
+        break;
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoError = action.error;
+        break;
       case FOLLOW_REQUEST:
         draft.followLoading = true;
         draft.followDone = false;
@@ -90,6 +94,7 @@ const reducer = (state = initialState, action) => {
       case FOLLOW_SUCCESS:
         draft.followLoading = false;
         draft.me.Followings.push({ id: action.data });
+        draft.followDone = true;
         break;
       case FOLLOW_FAILURE:
         draft.followLoading = false;
@@ -105,6 +110,7 @@ const reducer = (state = initialState, action) => {
         draft.me.Followings = draft.me.Followings.filter(
           (v) => v.id !== action.data
         );
+        draft.unfollowDone = true;
         break;
       case UNFOLLOW_FAILURE:
         draft.unfollowLoading = false;
@@ -118,7 +124,7 @@ const reducer = (state = initialState, action) => {
       case LOG_IN_SUCCESS:
         draft.logInLoading = false;
         draft.logInDone = true;
-        draft.me = dummyUser(action.data);
+        draft.me = action.data;
         break;
       case LOG_IN_FAILURE:
         draft.logInLoading = false;
@@ -157,8 +163,9 @@ const reducer = (state = initialState, action) => {
         draft.changeNicknameError = null;
         break;
       case CHANGE_NICKNAME_SUCCESS:
-        draftlchangeNicknameLoading = false;
-        draftlchangeNicknameDone = true;
+        draft.me.nickname = action.data.nickname;
+        draft.changeNicknameLoading = false;
+        draft.changeNicknameDone = true;
         break;
       case CHANGE_NICKNAME_FAILURE:
         draft.changeNicknameLoading = false;

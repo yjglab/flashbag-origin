@@ -1,9 +1,10 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import Head from "next/head";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
 import useInput from "../hooks/useInput";
 import styled from "styled-components";
+import Router from "next/router";
 import { SIGN_UP_REQUEST } from "../reducers/user";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,7 +13,25 @@ const ErrorMessage = styled.div`
 `;
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector(
+    (state) => state.user
+  );
+  useEffect(() => {
+    if (me && me.id) {
+      Router.replace("/");
+    }
+  }, [me && me.id]);
+  useEffect(() => {
+    if (signUpDone) {
+      Router.push("/");
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
 
   const [email, onChangeEmail] = useInput("");
   const [nickname, onChangeNickname] = useInput("");
@@ -64,6 +83,7 @@ const Signup = () => {
           <br />
           <Input
             name="user-nick"
+            type="text"
             value={nickname}
             required
             onChange={onChangeNickname}
@@ -74,6 +94,7 @@ const Signup = () => {
           <br />
           <Input
             name="user-password"
+            type="password"
             value={password}
             required
             onChange={onChangePassword}
@@ -84,6 +105,7 @@ const Signup = () => {
           <br />
           <Input
             name="user-password-check"
+            type="password"
             value={passwordCheck}
             required
             onChange={onChangePasswordCheck}

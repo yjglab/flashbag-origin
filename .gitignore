@@ -4,3 +4,4 @@ node_modules
 /prepare/back/config
 /prepare/back/migrations
 /prepare/back/seeders
+/prepare/back/uploads

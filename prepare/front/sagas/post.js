@@ -27,8 +27,29 @@ import {
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
+
+function uploadImagesAPI(data) {
+  return axios.post(`/post/images`, data);
+}
+function* uploadImages(action) {
+  try {
+    const result = yield call(uploadImagesAPI, action.data); // action.data == imageFormData
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 function likePostAPI(data) {
   return axios.patch(`/post/${data}/like`, data);
@@ -85,7 +106,7 @@ function* loadPosts(action) {
 }
 
 function addPostAPI(data) {
-  return axios.post("/post", { content: data });
+  return axios.post("/post", data); // form데이터는 바로 data로 보내줘야함
 }
 function* addPost(action) {
   try {
@@ -145,14 +166,17 @@ function* addComment(action) {
   }
 }
 
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
 function* watchLikePost() {
-  yield takeLatest(LIKE_POST_REQUEST, likePost); // eventListener와 비슷하 역할.
+  yield takeLatest(LIKE_POST_REQUEST, likePost);
 }
 function* watchUnlikePost() {
-  yield takeLatest(UNLIKE_POST_REQUEST, unlikePost); // eventListener와 비슷하 역할.
+  yield takeLatest(UNLIKE_POST_REQUEST, unlikePost);
 }
 function* watchAddPost() {
-  yield takeLatest(ADD_POST_REQUEST, addPost); // eventListener와 비슷하 역할.
+  yield takeLatest(ADD_POST_REQUEST, addPost);
 }
 function* watchRemovePost() {
   yield takeLatest(REMOVE_POST_REQUEST, removePost); // eventListener와 비슷하 역할.
@@ -165,6 +189,7 @@ function* watchLoadPosts() {
 }
 export default function* postSaga() {
   yield all([
+    fork(watchUploadImages),
     fork(watchLikePost),
     fork(watchUnlikePost),
     fork(watchAddPost),

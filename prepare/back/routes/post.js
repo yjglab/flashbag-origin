@@ -1,15 +1,55 @@
 const express = require("express");
-
+const multer = require("multer");
+const path = require("path");
 const { Post, Comment, Image, User } = require("../models");
 const { isLoggedIn } = require("./middlewares");
+const fs = require("fs");
 
 const router = express.Router();
-router.post("/", isLoggedIn, async (req, res) => {
+
+try {
+  fs.accessSync("uploads");
+} catch (error) {
+  console.log("uploads 폴더가 없으므로 새로 생성합니다");
+  fs.mkdirSync("uploads");
+}
+
+const upload = multer({
+  storage: multer.diskStorage({
+    // 임시로 하드웨어에 저장
+    destination(req, file, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      // abc.png
+      const ext = path.extname(file.originalname); // .png
+      const basename = path.basename(file.originalname, ext); // abc
+
+      done(null, basename + "_" + new Date().getTime() + ext); // abc120948123.png (덮어쓰기 방지)
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20mb
+});
+
+router.post("/", isLoggedIn, upload.none(), async (req, res) => {
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        // 이미지 여러개 올리면 -> image: [abc.png, def.png]
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image }))
+        );
+        await post.addImages(images);
+      } else {
+        // 이미지를 1개만 올리면 -> image: abc.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
     const fullPost = await Post.findOne({
       where: { id: post.id },
       include: [
@@ -69,6 +109,14 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   }
 });
 
+router.post(
+  "/images",
+  isLoggedIn,
+  upload.array("image"), // array - 다중이미지 업로드, single - 1개 이미지 업로드, fills - 다중이미지 여러개의 Input 태그로 업로드
+  async (req, res, next) => {
+    res.json(req.files.map((v) => v.filename));
+  }
+);
 router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });

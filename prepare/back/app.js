@@ -10,6 +10,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const passportConfig = require("./passport");
 const passport = require("passport");
+const path = require("path");
 
 dotenv.config();
 const app = express();
@@ -29,8 +30,9 @@ app.use(
     credentials: true, // 도메인간 쿠키 공유
   })
 );
-app.use(express.json()); // req.body 사용 위함
-app.use(express.urlencoded({ extended: true })); // req.body 사용 위함
+app.use("/", express.static(path.join(__dirname, "uploads"))); // localhost:3065/uploads
+app.use(express.json()); // req.body 사용 위함, axios 처리
+app.use(express.urlencoded({ extended: true })); // req.body 사용 위함, 일반 form data 처리
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({

@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     db.Post.hasMany(db.Image);
     db.Post.belongsToMany(db.Hashtag, { through: "PostHasgtag" });
     db.Post.belongsToMany(db.User, { through: "Like", as: "Likers" }); // 중간 테이블 명을 Like로, as는 별칭
-    db.Post.belongsTo(db.Post, { as: "RetweetId" });
+    db.Post.belongsTo(db.Post, { as: "Retweet" });
   };
   return Post;
 };

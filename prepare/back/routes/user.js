@@ -10,6 +10,7 @@ const router = express.Router();
 
 // 새로고침 시 로그인되어있으면 사용자 정보 불러오기
 router.get("/", async (req, res, next) => {
+  // console.log(req.headers)
   try {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
@@ -33,6 +34,38 @@ router.get("/", async (req, res, next) => {
     next(error);
   }
 });
+
+// 특정 사용자 정보 가져오기 (loadUser)
+router.get("/:userId", async (req, res, next) => {
+  try {
+    const fullUserWithoutPassword = await User.findOne({
+      where: { id: parseInt(req.params.userId, 10) },
+      attributes: { exclude: ["password"] }, // password컬럼 제외하고 나머지 정보는 모두 가져옴
+      include: [
+        {
+          model: Post,
+          attributes: ["id"],
+        },
+        { model: User, as: "Followings", attributes: ["id"] },
+        { model: User, as: "Followers", attributes: ["id"] },
+      ],
+    });
+    if (fullUserWithoutPassword) {
+      // 개인 정보 보호
+      const data = fullUserWithoutPassword.toJSON();
+      data.Posts = data.Posts.length;
+      data.followers = data.followers.length;
+      data.followings = data.followings.length;
+      res.status(200).json(data);
+    } else {
+      res.status(404).json("존재하지 않는 사용자입니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     // (서버 에러, 성공여부, 클라이언트에러)

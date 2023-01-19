@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../hooks/useInput";
 import {
-  addPost,
   UPLOAD_IMAGES_REQUEST,
   REMOVE_IMAGE,
   ADD_POST_REQUEST,
@@ -42,7 +41,6 @@ const PostForm = () => {
     imageInput.current.click();
   }, [imageInput.current]);
   const onChangeImages = useCallback((e) => {
-    console.log("images", e.target.files);
     const imageFormData = new FormData();
     [].forEach.call(e.target.files, (f) => {
       imageFormData.append("image", f); // key, 값. key는 upload.array("image")의 ""안이 일치해야함

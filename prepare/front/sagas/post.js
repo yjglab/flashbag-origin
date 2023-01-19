@@ -109,7 +109,9 @@ function* unlikePost(action) {
 }
 
 function loadPostsAPI(lastId) {
-  return axios.get(`/posts?lastId=${lastId || 0}`); // get은 데이터를 못보내므로 쿼리스트링으로 사용
+  return axios.get(`/posts?lastId=${lastId || 0}`);
+  // get은 데이터를 못보내므로 쿼리스트링으로 사용
+  // req.query.데이터명 으로 받음
 }
 function* loadPosts(action) {
   try {

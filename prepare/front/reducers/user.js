@@ -32,8 +32,8 @@ export const initialState = {
   removeFollowerDone: false,
   removeFollowerError: null,
   me: null,
-  signUpData: {},
-  loginData: {},
+  // signUpData: {},
+  // loginData: {},
 };
 export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
 export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO_SUCCESS";

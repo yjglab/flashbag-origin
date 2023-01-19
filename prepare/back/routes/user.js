@@ -46,6 +46,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
       return res.status(401).send(info.reason);
     }
     return req.logIn(user, async (loginErr) => {
+      // req.logIn() -> 이후 passport/index.js의 serializeUser 동작
       if (loginErr) {
         // 거의 가능성 없지만 혹시나 로그인 에러가 나면
         console.error(loginErr);
@@ -56,7 +57,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         attributes: { exclude: ["password"] }, // password컬럼 제외하고 나머지 정보는 모두 가져옴
         include: [
           {
-            model: Post,
+            model: Post, // me.Posts로 접근 가능 (hasMany관계)
             attributes: ["id"],
           },
           { model: User, as: "Followings", attributes: ["id"] },

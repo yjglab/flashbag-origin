@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      // UserId
+      // RetweetId
     },
     {
       charset: "utf8mb4", // mb4 -> 이모티콘까지
@@ -22,3 +24,16 @@ module.exports = (sequelize, DataTypes) => {
   };
   return Post;
 };
+
+/*
+sequelize가 생성해주는 함수들
+(hasMany, belongsToMany는 복수이므로 s가 붙음)
+ex) db.First.belongsTo(db.Second)
+
+obj.addSecond
+obj.removeSecond
+obj.getSecond
+obj.setSecond (수정)
+
+db 조작시 항상 await 사용하기.
+*/

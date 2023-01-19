@@ -6,6 +6,7 @@ import Head from "next/head";
 import wrapper from "../store/configureStore";
 
 const TwitBird = ({ Component }) => {
+  // Component: index.js의 return 부분
   return (
     <>
       <Head>

@@ -10,7 +10,7 @@ const TwitBird = ({ Component }) => {
   return (
     <>
       <Head>
-        <meta charSet="utf-8"></meta>
+        <meta charSet="utf-8" />
         <title>TwitBird</title>
       </Head>
       <div>공통메뉴</div>

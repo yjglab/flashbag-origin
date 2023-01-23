@@ -1,3 +1,4 @@
+/* 예시 파일 (사용안함) */
 import { LOAD_USER_REQUEST } from "../reducers/user";
 
 export const getStaticProps = wrapper.getStaticProps(async (context) => {

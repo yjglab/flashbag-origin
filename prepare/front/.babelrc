@@ -1,0 +1,14 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    [
+      "styled-components",
+      {
+        "ssr": true,
+        "displayName": true
+      }
+    ]
+  ]
+}
+
+// dev모드에서 무작위문자열로 되어있는 css class들을 컴포넌트명으로 바꿔줌

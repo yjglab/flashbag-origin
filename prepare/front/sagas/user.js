@@ -154,7 +154,6 @@ function* logIn(action) {
     yield put({
       type: LOG_IN_SUCCESS,
       data: result.data,
-      //   data: result.data,
     });
   } catch (err) {
     yield put({
@@ -172,9 +171,9 @@ function* logOut() {
     yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
-      //   data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOG_OUT_FAILURE,
       error: err.response.data,

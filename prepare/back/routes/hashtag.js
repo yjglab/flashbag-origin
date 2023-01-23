@@ -1,9 +1,10 @@
 const express = require("express");
 const { Op } = require("sequelize");
-const { Post, User, Image, Comment } = require("../models");
+const { Post, Hashtag, User, Image, Comment } = require("../models");
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
+// 특정 사용자의 게시글 모두 // GET /hashtag/해시태그명
+router.get("/:id", async (req, res, next) => {
   try {
     const where = {};
     if (parseInt(req.query.lastId, 10)) {
@@ -18,6 +19,10 @@ router.get("/", async (req, res, next) => {
         [Comment, "createdAt", "DESC"],
       ],
       include: [
+        {
+          model: Hashtag,
+          where: { name: decodeURIComponent(req.params.id) },
+        },
         {
           model: User,
           attributes: ["id", "nickname"],

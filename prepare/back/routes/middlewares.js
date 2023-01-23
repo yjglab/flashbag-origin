@@ -1,6 +1,6 @@
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
-    // isAuthenticated() : passport에서 제공하는
+    // isAuthenticated() : passport에서 제공
     next();
   } else {
     res.status(401).send("로그인되어있지 않습니다.");

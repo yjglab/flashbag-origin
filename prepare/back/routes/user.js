@@ -1,10 +1,11 @@
 const express = require("express");
-const { User, Post } = require("../models");
+const { User, Post, Image, Comment } = require("../models");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const db = require("../models");
 
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+const { Op } = require("sequelize");
 
 const router = express.Router();
 
@@ -35,7 +36,40 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/followers", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if (!user) {
+      res.status(403).send("존재하지 않는 사용자입니다.");
+    }
+    const followers = await user.getFollowers({
+      limit: parseInt(req.query.limit, 10),
+    });
+    res.status(200).json(followers);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.get("/followings", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if (!user) {
+      res.status(403).send("존재하지 않는 사용자입니다.");
+    }
+    const followings = await user.getFollowings({
+      limit: parseInt(req.query.limit, 10),
+    });
+    res.status(200).json(followings);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // 특정 사용자 정보 가져오기 (loadUser)
+// :params로 전달받는 주소는 가능한 한 맨 밑에서 작성하는 것이 좋다.
 router.get("/:userId", async (req, res, next) => {
   try {
     const fullUserWithoutPassword = await User.findOne({
@@ -54,12 +88,66 @@ router.get("/:userId", async (req, res, next) => {
       // 개인 정보 보호
       const data = fullUserWithoutPassword.toJSON();
       data.Posts = data.Posts.length;
-      data.followers = data.followers.length;
-      data.followings = data.followings.length;
+      data.Followers = data.Followers.length;
+      data.Followings = data.Followings.length;
       res.status(200).json(data);
     } else {
       res.status(404).json("존재하지 않는 사용자입니다.");
     }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+// 특정 사용자의 게시글 모두
+router.get("/:userId/posts", async (req, res, next) => {
+  try {
+    const where = { UserId: req.params.userId };
+    if (parseInt(req.query.lastId, 10)) {
+      // 초기 로딩이 아닐 때(스크롤 내려서 포스트를 더 불러올 때)
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; // lastId보다 작은
+    } // 쿼리스트링으로 받았으므로 req.query에 들어있음
+    const posts = await Post.findAll({
+      where,
+      limit: 10,
+      order: [
+        ["createdAt", "DESC"],
+        [Comment, "createdAt", "DESC"],
+      ],
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["id", "nickname"] }],
+        },
+        {
+          model: User, // 좋아요 누른사람
+          as: "Likers", // as 를 넣어줘야 위와 구분됨.
+          attributes: ["id"],
+        },
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(posts);
   } catch (error) {
     console.error(error);
     next(error);
@@ -101,6 +189,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
     });
   })(req, res, next);
 }); // 전략 실행
+
 router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     const exUser = await User.findOne({
@@ -125,10 +214,10 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/logout", (req, res, next) => {
-  req.logout(() => {
-    res.redirect("/");
-  });
+router.post("/logout", isLoggedIn, (req, res, next) => {
+  req.logout();
+  req.session.destroy();
+  res.send("ok");
 });
 
 router.patch("/nickname", isLoggedIn, async (req, res, next) => {
@@ -186,34 +275,6 @@ router.delete("/follower/:userId", isLoggedIn, async (req, res, next) => {
     }
     await user.removeFollowings(req.user.id);
     res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-router.get("/followers", isLoggedIn, async (req, res, next) => {
-  try {
-    const user = await User.findOne({ where: { id: req.user.id } });
-    if (!user) {
-      res.status(403).send("존재하지 않는 사용자입니다.");
-    }
-    const followers = await user.getFollowers();
-    res.status(200).json(followers);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
-router.get("/followings", isLoggedIn, async (req, res, next) => {
-  try {
-    const user = await User.findOne({ where: { id: req.user.id } });
-    if (!user) {
-      res.status(403).send("존재하지 않는 사용자입니다.");
-    }
-    const followings = await user.getFollowings();
-    res.status(200).json(followings);
   } catch (error) {
     console.error(error);
     next(error);

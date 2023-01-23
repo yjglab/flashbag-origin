@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
+const hashtagRouter = require("./routes/hashtag");
 const db = require("./models");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -47,6 +48,7 @@ app.use(passport.session());
 app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
+app.use("/hashtag", hashtagRouter);
 app.listen(3065, () => {
   console.log("🌐 서버 실행중");
 });

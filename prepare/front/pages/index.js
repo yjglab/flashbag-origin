@@ -77,5 +77,6 @@ export default Home;
 
 /*
 getStaticProps(): 언제 접속해도 데이터가 바뀔일이 없을 경우 사용 (사용 용도가 제한적 ex. 블로그 게시글, 쇼핑몰 이벤트 창)
+- dynamic routing에서 사용 시 getStaticPaths도 반드시 함께 필요
 getServerSideProps() : 접속할 때마다 바뀌는 화면이 있는 경우 사용 (대부분의 경우 사용)
 */

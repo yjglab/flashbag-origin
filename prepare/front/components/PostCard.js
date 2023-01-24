@@ -21,11 +21,17 @@ import {
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 import Link from "next/link";
-import moment from "moment";
-import "moment/locale/ko";
+import styled from "styled-components";
 
-moment.locale("ko");
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+dayjs.locale("ko");
 
+const Postcard = styled(Card)`
+  .ant-card-meta {
+    width: 100%;
+  }
+`;
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state) => state.post);
@@ -77,7 +83,7 @@ const PostCard = ({ post }) => {
   }, [id]);
   return (
     <div style={{ marginBottom: 20 }}>
-      <Card
+      <Postcard
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <RetweetOutlined key="retweet" onClick={onRetweet} />,
@@ -122,7 +128,7 @@ const PostCard = ({ post }) => {
         extra={id && <FollowButton post={post} />}
       >
         {post.RetweetId && post.Retweet ? (
-          <Card
+          <Postcard
             cover={
               post.Retweet.Images[0] && (
                 <PostImages images={post.Retweet.Images} />
@@ -130,7 +136,7 @@ const PostCard = ({ post }) => {
             }
           >
             <div style={{ float: "right" }}>
-              {moment(post.createdAt).format("YYYY년 MM월 DD일 H:mm:ss")}
+              {dayjs(post.createdAt).format("YYYY.MM.DD | H:mm:ss")}
             </div>
             <Card.Meta
               avatar={
@@ -143,11 +149,11 @@ const PostCard = ({ post }) => {
               title={post.Retweet.User.nickname}
               description={<PostCardContent postData={post.Retweet.content} />}
             />
-          </Card>
+          </Postcard>
         ) : (
           <>
             <div style={{ float: "right" }}>
-              {moment(post.createdAt).format("YYYY년 MM월 DD일 H:mm:ss")}
+              {dayjs(post.createdAt).format("YYYY.MM.DD | H:mm:ss")}
             </div>
 
             <Card.Meta
@@ -163,7 +169,7 @@ const PostCard = ({ post }) => {
             />
           </>
         )}
-      </Card>
+      </Postcard>
       {commentFormOpened && (
         <div>
           <CommentForm post={post} />

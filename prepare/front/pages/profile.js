@@ -19,7 +19,7 @@ const Profile = () => {
   const [followersLimit, setFollowersLimit] = useState(3);
   const [followingsLimit, setFollowingsLimit] = useState(3);
 
-  // SWR 사용 (action 3총사 대체 / load 데이터 관련 액션이 반드시 SSR 되어야하는 것이 아니면 SWR사용 고려해볼것)
+  // SWR 사용 (load action 3총사 대체 / load 데이터 관련 액션이 반드시 SSR 되어야하는 것이 아니면 SWR사용하는 것이 편라)
   // fetcher: 해당 주소를 어떻게 가져올 지를 결정. 특정 swr을 제외히고는 module로 따로 빼서 사용하기.
   // SWR에서 로딩중임을 의미하는 것은 Data, Error 모두 없는 경우
   const { data: followersData, error: followerError } = useSWR(

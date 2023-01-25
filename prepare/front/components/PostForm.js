@@ -84,7 +84,7 @@ const PostForm = () => {
           htmlType="submit"
           loading={addPostLoading}
         >
-          TWIT
+          FLASH
         </Button>
       </div>
       <div>

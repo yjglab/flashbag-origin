@@ -29,10 +29,13 @@ const Post = () => {
           content={
             singlePost.Images[0]
               ? singlePost.Images[0].src
-              : "https://twitbird.com/favicon.ico"
+              : "https://flashbag-origin.com/favicon.ico"
           }
         />
-        <meta property="og:url" content={`https://twitbird.com/post/${id}`} />
+        <meta
+          property="og:url"
+          content={`https://flashbag-origin.com/post/${id}`}
+        />
       </Head>
       <PostCard post={singlePost} />
     </AppLayout>

@@ -8,7 +8,7 @@ import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import wrapper from "../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
-const Home = () => {
+const Home = ({ ssrData }) => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
@@ -71,6 +71,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
     context.store.dispatch(END); // END action: Request가 success 될때까지 기다림.
     await context.store.sagaTask.toPromise();
+
+    return { props: { ssrData: "SSR props data" } }; // 컴포넌트 프롭스로 데이터 전달 가능
   }
 );
 export default Home;

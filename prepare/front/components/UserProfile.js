@@ -14,9 +14,9 @@ const UserProfile = () => {
   return (
     <Card
       actions={[
-        <div key="twit">
+        <div key="flash">
           <Link href={`/user/${me.id}`}>
-            <a>삐약</a>
+            <a>플래시</a>
           </Link>
           <br />
           {me.Posts.length}

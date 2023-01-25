@@ -65,7 +65,7 @@ const Profile = () => {
   return (
     <>
       <Head>
-        <title>Profile | TwitBird</title>
+        <title>Profile | Flashbag Origin</title>
       </Head>
       <AppLayout>
         <NicknameEditForm />

@@ -68,15 +68,18 @@ const User = () => {
             property="og:image"
             content="https://nodebird.com/favicon.ico"
           />
-          <meta property="og:url" content={`https://twirbird.com/user/${id}`} />
+          <meta
+            property="og:url"
+            content={`https://flashbag-origin.com/user/${id}`}
+          />
         </Head>
       )}
       {userInfo && userInfo.id !== me?.id ? (
         <Card
           style={{ marginBottom: 20 }}
           actions={[
-            <div key="twit">
-              짹짹
+            <div key="flash">
+              플래시
               <br />
               {userInfo.Posts}
             </div>,

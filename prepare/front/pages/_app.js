@@ -5,13 +5,13 @@ import "antd/dist/antd.css";
 import Head from "next/head";
 import wrapper from "../store/configureStore";
 
-const TwitBird = ({ Component }) => {
+const FlashbagOrigin = ({ Component }) => {
   // Component: index.js의 return 부분
   return (
     <>
       <Head>
         <meta charSet="utf-8" />
-        <title>TwitBird</title>
+        <title>Flashbag Origin</title>
       </Head>
       <div>공통메뉴</div>
       <Component />
@@ -19,8 +19,8 @@ const TwitBird = ({ Component }) => {
   );
 };
 
-TwitBird.propTypes = {
+FlashbagOrigin.propTypes = {
   Component: PropTypes.elementType.isRequired,
 };
 
-export default wrapper.withRedux(TwitBird);
+export default wrapper.withRedux(FlashbagOrigin);

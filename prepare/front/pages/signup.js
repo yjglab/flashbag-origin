@@ -68,7 +68,7 @@ const Signup = () => {
   return (
     <AppLayout>
       <Head>
-        <title>Sign Up | TwitBird</title>
+        <title>Sign Up | flashbag-origin</title>
       </Head>
       <Form onFinish={onSubmit}>
         <div>

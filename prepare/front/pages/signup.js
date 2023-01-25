@@ -68,7 +68,7 @@ const Signup = () => {
   return (
     <AppLayout>
       <Head>
-        <title>Sign Up | flashbag-origin</title>
+        <title>Sign Up | FLASHBAG ORIGIN</title>
       </Head>
       <Form onFinish={onSubmit}>
         <div>

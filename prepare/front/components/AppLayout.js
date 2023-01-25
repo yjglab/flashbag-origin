@@ -42,7 +42,7 @@ const AppLayout = ({ children }) => {
       <Menu mode="horizontal">
         <Menu.Item>
           <Link href="/">
-            <a>Flashbag-origin</a>
+            <a>FLASHBAG ⚡︎</a>
           </Link>
         </Menu.Item>
         <Menu.Item>

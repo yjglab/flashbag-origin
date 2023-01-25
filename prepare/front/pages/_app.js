@@ -11,7 +11,7 @@ const FlashbagOrigin = ({ Component }) => {
     <>
       <Head>
         <meta charSet="utf-8" />
-        <title>Flashbag Origin</title>
+        <title>Flashbag</title>
       </Head>
       <div>공통메뉴</div>
       <Component />

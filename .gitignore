@@ -1,7 +1,4 @@
 node_modules
 .next
 .env
-/prepare/back/config
-/prepare/back/migrations
-/prepare/back/seeders
-/prepare/back/uploads
+/prepare/flashbag-origin.cer

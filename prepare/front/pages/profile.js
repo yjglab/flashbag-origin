@@ -11,6 +11,7 @@ import { END } from "redux-saga";
 import wrapper from "../store/configureStore";
 import axios from "axios";
 import useSWR from "swr";
+import { backUrl } from "../config/config";
 
 const fetcher = (url) =>
   axios.get(url, { withCredentials: true }).then((result) => result.data);
@@ -23,11 +24,11 @@ const Profile = () => {
   // fetcher: 해당 주소를 어떻게 가져올 지를 결정. 특정 swr을 제외히고는 module로 따로 빼서 사용하기.
   // SWR에서 로딩중임을 의미하는 것은 Data, Error 모두 없는 경우
   const { data: followersData, error: followerError } = useSWR(
-    `http://localhost:3065/user/followers?limit=${followersLimit}`,
+    `${backUrl}/user/followers?limit=${followersLimit}`,
     fetcher
   );
   const { data: followingsData, error: followingError } = useSWR(
-    `http://localhost:3065/user/followings?limit=${followingsLimit}`,
+    `${backUrl}/user/followings?limit=${followingsLimit}`,
     fetcher
   );
 

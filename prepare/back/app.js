@@ -12,6 +12,8 @@ const cors = require("cors");
 const passportConfig = require("./passport");
 const passport = require("passport");
 const path = require("path");
+const hpp = require("hpp");
+const helmet = require("helmet");
 
 dotenv.config();
 const app = express();
@@ -24,7 +26,17 @@ db.sequelize
 
 passportConfig();
 
-app.use(morgan("dev"));
+let PORT;
+if (process.env.NODE_ENV === "production") {
+  app.use(morgan("combined")); // 자세히
+  app.use(hpp()); // 보안용 패키지
+  app.use(helmet()); // 보안용 패키지
+  PORT = 80;
+} else {
+  app.use(morgan("dev"));
+  PORT = 3065;
+}
+
 app.use(
   cors({
     origin: true,
@@ -53,6 +65,6 @@ app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
 app.use("/hashtag", hashtagRouter);
-app.listen(3065, () => {
+app.listen(PORT, () => {
   console.log("🌐 서버 실행중");
 });

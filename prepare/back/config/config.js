@@ -10,6 +10,7 @@ module.exports = {
     host: "127.0.0.1",
     dialect: "mysql",
     timezone: "+09:00",
+    // logging: false,
   },
   test: {
     username: "root",
@@ -18,6 +19,7 @@ module.exports = {
     host: "127.0.0.1",
     dialect: "mysql",
     timezone: "+09:00",
+    // logging: false,
   },
   production: {
     username: "root",
@@ -26,5 +28,6 @@ module.exports = {
     host: "127.0.0.1",
     dialect: "mysql",
     timezone: "+09:00",
+    logging: false,
   },
 };

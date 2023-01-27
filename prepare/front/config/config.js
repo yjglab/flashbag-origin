@@ -1,4 +1,4 @@
 export const backUrl =
   process.env.NODE_ENV === "production"
-    ? "http://3.38.96.194"
+    ? "http://api.flashbag.site"
     : "http://localhost:3065";

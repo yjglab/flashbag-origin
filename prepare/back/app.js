@@ -52,6 +52,11 @@ app.use(
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false, // https 적용시 true
+      domain: process.env.NODE_ENV === "production" && ".flashbag.site", // api.flashbag.site와 flashbag.site의 cookie 공유
+    },
   })
 );
 app.use(passport.initialize());

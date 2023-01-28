@@ -278,9 +278,12 @@ router.post(
   isLoggedIn,
   upload.array("image"), // array - 다중이미지 업로드, single - 1개 이미지 업로드, fills - 다중이미지 여러개의 Input 태그로 업로드
   async (req, res, next) => {
-    res.json(req.files.map((v) => v.location));
+    res.json(
+      req.files.map((v) => v.location.replace(/\/original\//, "/thumb/"))
+    );
     // S3에서는 v.location으로 사용. 원래는 v.filename.
     // v.location에 S3 스토리지 주소가 들어있음.
+    // 이미지 받는 라우터에서 우선 lambda 함수로 압축된 이미지가 들어있는 thumb폴더로 변경
   }
 );
 router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {

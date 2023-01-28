@@ -37,7 +37,7 @@ const ImagesZoom = ({ images, onClose }) => {
                 <img
                   src={
                     process.env.NODE_ENV === "production"
-                      ? `${v.src}`
+                      ? `${v.src.replace(/\/thumb\//, "/original/")}`
                       : `${backUrl}/${v.src}`
                   }
                   alt={v.src}

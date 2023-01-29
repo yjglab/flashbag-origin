@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(morgan("combined")); // 자세히
   app.use(hpp()); // 보안용 패키지
   app.use(helmet()); // 보안용 패키지
-  PORT = 80;
+  PORT = 3065;
 } else {
   app.use(morgan("dev"));
   PORT = 3065;

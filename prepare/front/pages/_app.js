@@ -13,7 +13,6 @@ const FlashbagOrigin = ({ Component }) => {
         <meta charSet="utf-8" />
         <title>Flashbag</title>
       </Head>
-      <div>공통메뉴</div>
       <Component />
     </>
   );

@@ -22,34 +22,34 @@ AWS.config.update({
   region: "ap-northeast-2",
 });
 const upload = multer({
-  storage: multerS3({
-    s3: new AWS.S3(),
-    bucket: "flashbag-origin",
-    key(req, file, cb) {
-      cb(
-        null,
-        `original/${Date.now()}_${encodeURIComponent(
-          path.basename(file.originalname)
-        )}`
-      );
-    },
-  }),
-  limits: { fileSize: 20 * 1024 * 1024 }, // 20mb
-  /*
-  storage: multer.diskStorage({
-    // 임시로 하드웨어에 저장
-    destination(req, file, done) {
-      done(null, "uploads");
-    },
-    filename(req, file, done) {
-      // abc.png
-      const ext = path.extname(file.originalname); // .png
-      const basename = path.basename(file.originalname, ext); // abc
+  storage:
+    process.env.NODE_ENV === "production"
+      ? multerS3({
+          s3: new AWS.S3(),
+          bucket: "flashbag-origin",
+          key(req, file, cb) {
+            cb(
+              null,
+              `original/${Date.now()}_${encodeURIComponent(
+                path.basename(file.originalname)
+              )}`
+            );
+          },
+        })
+      : multer.diskStorage({
+          // 임시로 하드웨어에 저장
+          destination(req, file, done) {
+            done(null, "uploads");
+          },
+          filename(req, file, done) {
+            // abc.png
+            const ext = path.extname(file.originalname); // .png
+            const basename = path.basename(file.originalname, ext); // abc
 
-      done(null, basename + "_" + new Date().getTime() + ext); // abc120948123.png (덮어쓰기 방지)
-    },
-  }),
-   */
+            done(null, basename + "_" + new Date().getTime() + ext); // abc120948123.png (덮어쓰기 방지)
+          },
+        }),
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20mb
 });
 
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
@@ -284,7 +284,11 @@ router.post(
   upload.array("image"), // array - 다중이미지 업로드, single - 1개 이미지 업로드, fills - 다중이미지 여러개의 Input 태그로 업로드
   async (req, res, next) => {
     res.json(
-      req.files.map((v) => v.location.replace(/\/original\//, "/thumb/"))
+      req.files.map((v) =>
+        process.env.NODE_ENV === "production"
+          ? v.location.replace(/\/original\//, "/thumb/")
+          : v.filename
+      )
     );
     // S3에서는 v.location으로 사용. 원래는 v.filename.
     // v.location에 S3 스토리지 주소가 들어있음.

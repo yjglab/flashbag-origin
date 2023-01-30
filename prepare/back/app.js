@@ -26,15 +26,13 @@ db.sequelize
 
 passportConfig();
 
-let PORT;
 if (process.env.NODE_ENV === "production") {
+  app.enable("trust proxy"); // https 적용시 삽입
   app.use(morgan("combined")); // 자세히
   app.use(hpp()); // 보안용 패키지
   app.use(helmet()); // 보안용 패키지
-  PORT = 80;
 } else {
   app.use(morgan("dev"));
-  PORT = 3065;
 }
 
 app.use(
@@ -52,9 +50,10 @@ app.use(
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    proxy: process.env.NODE_ENV === "production", // https 적용시 삽입
     cookie: {
       httpOnly: true,
-      secure: false, // https 적용시 true
+      secure: process.env.NODE_ENV === "production", // https 적용시에만 true
       domain: process.env.NODE_ENV === "production" && ".flashbag.site", // api.flashbag.site와 flashbag.site의 cookie 공유
     },
   })
@@ -66,6 +65,6 @@ app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
 app.use("/hashtag", hashtagRouter);
-app.listen(PORT, () => {
+app.listen(3065, () => {
   console.log("🌐 서버 실행중");
 });

@@ -320,6 +320,30 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
+
+router.patch("/:postId", isLoggedIn, async (req, res, next) => {
+  try {
+    await Post.update(
+      {
+        where: {
+          id: req.params.postId,
+          UserId: req.user.id,
+        },
+      },
+      {
+        content: req.body.content,
+      }
+    );
+    res.status(200).json({
+      PostId: parseInt(req.params.postId, 10),
+      content: req.body.content,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.delete("/:postId", isLoggedIn, async (req, res, next) => {
   try {
     await Post.destroy({

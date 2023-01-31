@@ -107,6 +107,17 @@ const PostCard = ({ post }) => {
     },
     [post]
   );
+
+  const onReport = useCallback(
+    (nickname, postId) => () => {
+      if (id) {
+        alert(`${nickname}님의 ${postId}번 게시글이 신고되었습니다.`);
+      } else {
+        alert("로그인이 필요합니다.");
+      }
+    },
+    [id]
+  );
   return (
     <div style={{ marginBottom: 20 }}>
       <Postcard
@@ -142,7 +153,9 @@ const PostCard = ({ post }) => {
                     </Button>{" "}
                   </>
                 ) : (
-                  <Button>신고</Button>
+                  <Button onClick={onReport(post.User.nickname, post.id)}>
+                    신고
+                  </Button>
                 )}
               </Button.Group>
             }

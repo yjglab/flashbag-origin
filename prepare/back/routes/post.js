@@ -188,7 +188,7 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
       (post.Retweet && post.Retweet.UserId === req.user.id)
     ) {
       // 자신의 글을 리트윗 하는 경우 || 남이 내글을 리트윗한것을 내가 다시 리트윗하는 경우
-      return res.status(403).send("자신의 글은 리트윗할 수 없습니다.");
+      return res.status(403).send("자신의 글을 리플래시할 수 없습니다.");
     }
     const retweetTargetId = post.RetweetId || post.id;
     const exPost = await Post.findOne({
@@ -198,7 +198,7 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
       },
     });
     if (exPost) {
-      return res.status(403).send("이미 리트윗한 글입니다.");
+      return res.status(403).send("이미 리플래시된 글입니다.");
     }
     const retweet = await Post.create({
       UserId: req.user.id,
@@ -322,18 +322,32 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
 });
 
 router.patch("/:postId", isLoggedIn, async (req, res, next) => {
+  const hashtags = req.body.content.match(/#[^/\s]+/g); // 해시태그가 수정되었을 수 있으므로
   try {
     await Post.update(
+      {
+        content: req.body.content,
+      },
       {
         where: {
           id: req.params.postId,
           UserId: req.user.id,
         },
-      },
-      {
-        content: req.body.content,
       }
-    );
+    ); // update는 수행 후 객체를 돌려주지 않음.
+    const post = await Post.findOne({
+      where: {
+        id: req.params.postId,
+      },
+    });
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) =>
+          Hashtag.findOrCreate({ where: { name: tag.slice(1).toLowerCase() } })
+        )
+      );
+      await post.setHashtags(result.map((v) => v[0])); // setHashtags로 기존에 저장된 해시태그 제거하고 새로 배치.
+    }
     res.status(200).json({
       PostId: parseInt(req.params.postId, 10),
       content: req.body.content,

@@ -18,6 +18,7 @@ import {
   REMOVE_POST_REQUEST,
   UNLIKE_POST_REQUEST,
   RETWEET_REQUEST,
+  UPDATE_POST_REQUEST,
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 import Link from "next/link";
@@ -81,6 +82,31 @@ const PostCard = ({ post }) => {
       data: post.id,
     });
   }, [id]);
+
+  const [updatePostMode, setUpdatePostMode] = useState(false);
+  const onUpdatePostMode = useCallback(() => {
+    setUpdatePostMode(true);
+  }, []);
+  const onCloseUpdatePostMode = useCallback(() => {
+    setUpdatePostMode(false);
+  }, []);
+  const onUpdatePost = useCallback(
+    (editText) => () => {
+      if (!editText) {
+        alert("빈 게시글로 수정할 수 없습니다.");
+        return;
+      } else {
+        dispatch({
+          type: UPDATE_POST_REQUEST,
+          data: {
+            PostId: post.id,
+            content: editText,
+          },
+        });
+      }
+    },
+    [post]
+  );
   return (
     <div style={{ marginBottom: 20 }}>
       <Postcard
@@ -104,7 +130,9 @@ const PostCard = ({ post }) => {
               <Button.Group>
                 {id && post.User.id === id ? (
                   <>
-                    {!post.RetweetId && <Button>수정</Button>}
+                    {!post.RetweetId && (
+                      <Button onClick={onUpdatePostMode}>수정</Button>
+                    )}
                     <Button
                       type="danger"
                       onClick={onRemovePost}
@@ -123,7 +151,9 @@ const PostCard = ({ post }) => {
           </Popover>,
         ]}
         title={
-          post.RetweetId ? `${post.User.nickname}님이 리트윗했습니다.` : null
+          post.RetweetId
+            ? `${post.User.nickname}님에 의해 ${post.Retweet.User.nickname}님의 글이 비쳤습니다!`
+            : null
         }
         extra={id && <FollowButton post={post} />}
       >
@@ -147,7 +177,13 @@ const PostCard = ({ post }) => {
                 </Link>
               }
               title={post.Retweet.User.nickname}
-              description={<PostCardContent postData={post.Retweet.content} />}
+              description={
+                <PostCardContent
+                  onUpdatePost={onUpdatePost}
+                  onCloseUpdatePostMode={onCloseUpdatePostMode}
+                  postData={post.Retweet.content}
+                />
+              }
             />
           </Postcard>
         ) : (
@@ -165,7 +201,14 @@ const PostCard = ({ post }) => {
                 </Link>
               }
               title={post.User.nickname}
-              description={<PostCardContent postData={post.content} />}
+              description={
+                <PostCardContent
+                  updatePostMode={updatePostMode}
+                  onUpdatePost={onUpdatePost}
+                  onCloseUpdatePostMode={onCloseUpdatePostMode}
+                  postData={post.content}
+                />
+              }
             />
           </>
         )}
